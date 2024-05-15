@@ -17,8 +17,11 @@ def main():
         prompt = f"What is the sum of {num1} and {num2}?"
         # Calling GPT to process the prompt
         response = get_response(prompt)
-        # Display the result
-        st.write("AI: ", response['choices'][0]['text'].strip())
+        # Display the result or error
+        if 'choices' in response and len(response['choices']) > 0 and 'text' in response['choices'][0]:
+            st.write("AI: ", response['choices'][0]['text'].strip())
+        else:
+            st.write("AI: An error occurred. Please try again.")
 
 def get_response(prompt):
     try:
