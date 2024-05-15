@@ -23,7 +23,7 @@ def main():
     st.title("AI Number Adder with GPT")
 
     # Set your OpenAI API key
-    api_key = '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'
+    api_key = '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'
 
     # Create input boxes for numbers
     num1 = st.number_input("Enter the first number:", key="num1")
