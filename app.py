@@ -9,7 +9,7 @@ if 'conversation' not in st.session_state:
 openai.api_key = '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'
 
 def main():
-    st.title("Interactive AI Chat with GPT")
+    st.title("Interactive AI Chat")
 
     # Text-to-speech script
     st.markdown("""
@@ -45,13 +45,13 @@ def update_conversation(speaker, message):
 
 def get_response(prompt):
     response = openai.ChatCompletion.create(
-        model="gpt-4o",  
+        model="gpt-4o",  # Adjust according to your API plan
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt}
         ]
     )
-    return response['choices'][0]['message']['content'].strip()
+    return response.choices[0].message['content'].strip()
 
 def speak(text):
     st.markdown(
