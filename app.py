@@ -1,36 +1,64 @@
 import streamlit as st
 import openai
 
+# Initialize session state to store conversation
+if 'conversation' not in st.session_state:
+    st.session_state['conversation'] = []
+
 # Set your OpenAI API key
 openai.api_key = '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'
 
 def main():
-    st.title("OpenAI GPT Chat")
+    st.title("Interactive AI Chat")
 
-    conversation = st.session_state.get('conversation', [])
-    
-    # Display previous parts of the conversation
-    for part in conversation:
-        st.text_area("", value=part, height=80, disabled=True)
-    
-    user_input = st.text_input("Ask me anything!", key="input", on_change=clear_input_box)
+    # Text-to-speech script
+    st.markdown("""
+        <script src="https://code.responsivevoice.org/responsivevoice.js?key=yourKey"></script>
+        """, unsafe_allow_html=True)
 
-    if st.button("Send") or user_input:
+    # Display the conversation history
+    for idx, part in enumerate(st.session_state['conversation']):
+        speaker, text = part
+        st.text_area(f"{speaker} says:", value=text, height=100, key=str(idx), disabled=True)
+    
+    # User input
+    user_input = st.text_input("Your message:", key="user_input")
+
+    # Send button
+    if st.button("Send"):
         if user_input:
-            conversation.append("You: " + user_input)
-            st.session_state.conversation = conversation
-            response = openai.Completion.create(
-                engine="davinci", 
-                prompt=user_input,
-                max_tokens=150
-            )
-            answer = response.choices[0].text.strip()
-            conversation.append("AI: " + answer)
-            st.session_state.conversation = conversation
-            st.session_state.input = ""
+            # Update conversation history
+            update_conversation("You", user_input)
 
-def clear_input_box():
-    st.session_state.input = ""
+            # Get response from OpenAI GPT
+            response = get_response(user_input)
+            update_conversation("AI", response)
+
+            # Speak the response
+            speak(response)
+
+            # Clear input
+            st.session_state['user_input'] = ""
+
+def update_conversation(speaker, message):
+    st.session_state['conversation'].append((speaker, message))
+
+def get_response(prompt):
+    response = openai.Completion.create(
+        engine="text-davinci-003",  # Change to "text-davinci-004" or appropriate engine for GPT-4o
+        prompt=prompt,
+        max_tokens=150
+    )
+    return response.choices[0].text.strip()
+
+def speak(text):
+    st.markdown(
+        f"""
+        <script>
+        responsiveVoice.speak("{text}", "US English Female");
+        </script>
+        """, unsafe_allow_html=True
+    )
 
 if __name__ == "__main__":
     main()
