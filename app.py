@@ -44,12 +44,13 @@ def update_conversation(speaker, message):
     st.session_state['conversation'].append((speaker, message))
 
 def get_response(prompt):
-    """Gets a response from the GPT-3.5 Turbo model."""
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",  # Specify the model
-        messages=[{"role": "user", "content": prompt}]
+    """Gets a response from the OpenAI model."""
+    response = openai.Completion.create(
+        model="gpt-3.5-turbo", 
+        prompt=prompt,
+        max_tokens=150
     )
-    return response['choices'][0]['message']['content'].strip()
+    return response.choices[0].text.strip()
 
 def speak(text):
     """Uses ResponsiveVoice to convert text to speech."""
