@@ -32,7 +32,8 @@ def get_response(prompt):
         )
         return response
     except Exception as e:
-        return {"error": f"An error occurred: {str(e)}"}
+        st.error(f"An error occurred: {str(e)}")
+        return {}
 
 if __name__ == "__main__":
     main()
