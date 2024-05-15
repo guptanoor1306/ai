@@ -9,7 +9,7 @@ if 'conversation' not in st.session_state:
 openai.api_key = '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'
 
 def main():
-    st.title("Interactive AI Chat")
+    st.title("Interactive AI Chat with GPT")
 
     # Text-to-speech script
     st.markdown("""
@@ -44,12 +44,14 @@ def update_conversation(speaker, message):
     st.session_state['conversation'].append((speaker, message))
 
 def get_response(prompt):
-    response = openai.Completion.create(
-        engine="text-davinci-003",  # Change to "text-davinci-004" or appropriate engine for GPT-4o
-        prompt=prompt,
-        max_tokens=150
+    response = openai.ChatCompletion.create(
+        model="gpt-4o",  
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
     )
-    return response.choices[0].text.strip()
+    return response['choices'][0]['message']['content'].strip()
 
 def speak(text):
     st.markdown(
