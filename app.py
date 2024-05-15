@@ -1,8 +1,8 @@
 import streamlit as st
-import openai
+import requests
 
 # Set your OpenAI API key
-openai.api_key = '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'
+api_key = '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'
 
 def main():
     st.title("AI Number Adder with GPT")
@@ -25,12 +25,16 @@ def main():
 
 def get_response(prompt):
     try:
-        response = openai.Completion.create(
-            engine="gpt-3.5-turbo",  # Update this with the model you have access to
-            prompt=prompt,
-            max_tokens=50
-        )
-        return response
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "prompt": prompt,
+            "max_tokens": 50
+        }
+        response = requests.post("https://api.openai.com/v1/completions", json=data, headers=headers)
+        return response.json()
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
         return {}
