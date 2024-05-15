@@ -15,7 +15,7 @@ def get_response(prompt, api_key):
         if response.status_code == 200:
             return response.json()
         else:
-            return {"error": f"Request failed with status code {response.status_code}"}
+            return {"error": f"Request failed with status code {response.status_code}: {response.text}"}
     except Exception as e:
         return {"error": f"An error occurred: {str(e)}"}
 
@@ -32,14 +32,14 @@ def main():
     # Button to trigger the addition
     if st.button("Add Numbers"):
         # Constructing the prompt to send to GPT
-        prompt = f"What is the sum of {num1} and {num2}?"
+        prompt = f"Calculate the sum of {num1} and {num2}."
         # Calling GPT to process the prompt
         response = get_response(prompt, api_key)
         # Display the result or error
         if 'choices' in response and len(response['choices']) > 0 and 'text' in response['choices'][0]:
             st.write("AI: ", response['choices'][0]['text'].strip())
         elif 'error' in response:
-            st.write("AI: An error occurred. Please try again.")
+            st.write("AI: An error occurred:", response['error'])
         else:
             st.write("AI: Unable to retrieve a response from the API.")
 
