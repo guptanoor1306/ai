@@ -1,20 +1,20 @@
 import streamlit as st
 import openai
 
-# Initialize session state to store conversation
-if 'conversation' not in st.session_state:
-    st.session_state['conversation'] = []
-
 # Set your OpenAI API key
 openai.api_key = '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'
 
 def main():
-    st.title("Interactive AI Chat")
+    st.title("Interactive AI Chat with GPT-3.5 Turbo")
 
-    # Text-to-speech script
+    # Load text-to-speech JavaScript
     st.markdown("""
         <script src="https://code.responsivevoice.org/responsivevoice.js?key=yourKey"></script>
         """, unsafe_allow_html=True)
+
+    # Initialize session state to store conversation history
+    if 'conversation' not in st.session_state:
+        st.session_state['conversation'] = []
 
     # Display the conversation history
     for idx, part in enumerate(st.session_state['conversation']):
@@ -25,35 +25,34 @@ def main():
     user_input = st.text_input("Your message:", key="user_input")
 
     # Send button
-    if st.button("Send"):
-        if user_input:
-            # Update conversation history
-            update_conversation("You", user_input)
+    if st.button("Send") and user_input:
+        # Update conversation history
+        update_conversation("You", user_input)
 
-            # Get response from OpenAI GPT
-            response = get_response(user_input)
-            update_conversation("AI", response)
+        # Get response from OpenAI GPT
+        response = get_response(user_input)
+        update_conversation("AI", response)
 
-            # Speak the response
-            speak(response)
+        # Speak the response
+        speak(response)
 
-            # Clear input
-            st.session_state['user_input'] = ""
+        # Clear input
+        st.session_state.user_input = ""
 
 def update_conversation(speaker, message):
+    """Updates the conversation history in the session state."""
     st.session_state['conversation'].append((speaker, message))
 
 def get_response(prompt):
+    """Gets a response from the GPT-3.5 Turbo model."""
     response = openai.ChatCompletion.create(
-        model="gpt-4o",  # Adjust according to your API plan
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": prompt}
-        ]
+        model="gpt-3.5-turbo",  # Specify the model
+        messages=[{"role": "user", "content": prompt}]
     )
-    return response.choices[0].message['content'].strip()
+    return response['choices'][0]['message']['content'].strip()
 
 def speak(text):
+    """Uses ResponsiveVoice to convert text to speech."""
     st.markdown(
         f"""
         <script>
