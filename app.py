@@ -18,18 +18,18 @@ def main():
         # Calling GPT to process the prompt
         response = get_response(prompt)
         # Display the result
-        st.write("AI: ", response)
+        st.write("AI: ", response['choices'][0]['text'].strip())
 
 def get_response(prompt):
     try:
         response = openai.Completion.create(
-            engine="davinci",  # Update this with the model you have access to
+            engine="gpt-3.5-turbo",  # Update this with the model you have access to
             prompt=prompt,
             max_tokens=50
         )
-        return response.choices[0].text.strip()
+        return response
     except Exception as e:
-        return f"An error occurred: {str(e)}"
+        return {"error": f"An error occurred: {str(e)}"}
 
 if __name__ == "__main__":
     main()
