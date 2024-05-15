@@ -1,2 +1,3 @@
 pip install streamlit
 pip install --upgrade openai
+openai migrate
